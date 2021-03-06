@@ -54,16 +54,17 @@ def show_blank_maze(root, maze_canvas, Canvas_param, UI_param):
 
 
 def generate_maze(root, maze_canvas, Canvas_param, UI_param):
+	#reset abort generation button
+	Canvas_param.abort_generation = False
+
 	# update program settings
 	Canvas_param.display_process = UI_param.display_process_var.get()
 	Canvas_param.speed_factor = UI_param.spinbox_var.get()
 	Canvas_param.maze_type = UI_param.maze_type_combobox.get()
 
 	# update maze dimensions
-	# MAKE IT UPDATE WHEN THEY CLICK BOXBOBOX TO A BLACK MAZE
 	update_maze_dimensions(Canvas_param, UI_param)
 
-	#MUST FIX SO THERE IS ONLY ONE VARIABLE
 	maze_tensor = generate_maze_tensor(*Canvas_param.shape)
 	Canvas_param.maze_tensor = maze_tensor
 
@@ -96,6 +97,7 @@ class Canvas_parameters:
 		self.displaying_maze = False
 
 		self.mouse_cord = (0, 0)
+		self.abort_generation = False
 
 	def mouse_click(self, UI_param, event, root, maze_canvas):
 		if not self.displaying_maze:
@@ -107,6 +109,9 @@ class Canvas_parameters:
 
 			#redraw maze
 			display_tensor(root, maze_canvas, self)
+
+	def set_abort_generation(self):
+		self.abort_generation = True
 
 
 
@@ -150,6 +155,8 @@ class UI_parameters:
 	def create_widgets(self, root):
 		self.maze_button = Button(root, text="Generate", pady=25, command=lambda: generate_maze(
 			root, maze_canvas, Canvas_param, UI_param))
+		self.abort_button = Button(root, text="Abort", pady=25, padx=20, command=Canvas_param.set_abort_generation)
+
 		self.display_process_checkbutton = Checkbutton(
 			root, text="Display Creation Process", variable=UI_param.display_process_var, onvalue=True, offvalue=False)
 		self.speed_spinbox = Spinbox(root, from_=UI_param.lowest_speed_factor,
@@ -180,7 +187,7 @@ root.geometry("1000x900")
 # STORE IN A CLASS
 maze_canvas = Canvas(root, width=Canvas_param.canvas_width,
 					 height=Canvas_param.canvas_height, bg=Canvas_param.bg_color)
-maze_canvas.grid(row=2, column=0, columnspan=4)
+maze_canvas.grid(row=2, column=0, columnspan=5)
 
 maze_canvas.bind("<Button-1>", lambda x: Canvas_param.mouse_click(UI_param, x, root, maze_canvas))
 
@@ -192,12 +199,13 @@ UI_param.create_widgets(root)
 
 
 UI_param.maze_button.grid(row=0, column=0)
-UI_param.display_process_checkbutton.grid(row=0, column=1)
-UI_param.speed_spinbox.grid(row=1, column=1)
-UI_param.maze_dimensions_combobox.grid(row=0, column=2)
-UI_param.maze_type_combobox.grid(row=1, column=2)
-UI_param.mouse_start_mode_button.grid(row=0, column=3)
-UI_param.mouse_end_mode_button.grid(row=1, column=3)
+UI_param.abort_button.grid(row=0, column=1)
+UI_param.display_process_checkbutton.grid(row=0, column=2)
+UI_param.speed_spinbox.grid(row=1, column=2)
+UI_param.maze_dimensions_combobox.grid(row=0, column=3)
+UI_param.maze_type_combobox.grid(row=1, column=3)
+UI_param.mouse_start_mode_button.grid(row=0, column=4)
+UI_param.mouse_end_mode_button.grid(row=1, column=4)
 
 # generate starting maze
 show_blank_maze(root, maze_canvas, Canvas_param, UI_param)

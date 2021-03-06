@@ -12,6 +12,13 @@ def solve_maze_deep_search(root, maze_tensor, cord, end_cord, maze_canvas, Canva
 	Canvas_param.maze_tensor[cord[0], cord[1], 4] = 3
 
 	while len(maze_stack) > 0:
+		#check if abort button pressed
+		if Canvas_param.abort_generation == True:
+			#give back control to user
+			Canvas_param.displaying_maze = False
+
+			return Canvas_param.maze_tensor
+
 		choice_list = possible_choices(Canvas_param.maze_tensor, cord, "deep")
 
 		if len(choice_list) == 0 or cord == end_cord:
